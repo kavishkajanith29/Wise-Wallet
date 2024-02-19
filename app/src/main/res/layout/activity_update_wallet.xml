@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".UpdateWalletActivity"
+    android:padding="16dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/editWalletHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit Wallet"
+        android:layout_alignParentTop="true"
+        android:textColor="@color/green"
+        android:textSize="24sp"
+        />
+    <ImageView
+        android:id="@+id/updateSaveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/editWalletHeading"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/baseline_done_24"
+        android:layout_marginEnd="6dp" />
+
+    <TextView
+        android:id="@+id/updateTypeTextView"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:padding="12dp"
+        android:textSize="20sp"
+        android:layout_below="@id/editWalletHeading"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/green_border"
+        android:maxLines="1" />
+
+    <EditText
+        android:id="@+id/updateCategoryEditText"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:hint="@string/enter_the_category"
+        android:gravity="top"
+        android:padding="12dp"
+        android:textSize="18sp"
+        android:background="@drawable/green_border"
+        android:layout_below="@+id/updateTypeTextView"
+        android:inputType="text"
+        android:layout_marginTop="12dp"/>
+
+    <EditText
+        android:id="@+id/updateDescriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:hint="@string/enter_the_description"
+        android:gravity="top"
+        android:padding="12dp"
+        android:textSize="18sp"
+        android:background="@drawable/green_border"
+        android:layout_below="@+id/updateCategoryEditText"
+        android:inputType="text"
+        android:layout_marginTop="12dp"/>
+    <EditText
+        android:id="@+id/updateAmountEditText"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:hint="@string/enter_the_amount"
+        android:gravity="top"
+        android:padding="12dp"
+        android:textSize="18sp"
+        android:background="@drawable/green_border"
+        android:layout_below="@+id/updateDescriptionEditText"
+        android:inputType="number"
+        android:layout_marginTop="12dp"/>
+
+    <Button
+        android:id="@+id/updateDateButton"
+        android:layout_width="match_parent"
+        android:layout_height="60sp"
+        android:layout_below="@+id/updateAmountEditText"
+        android:layout_centerInParent="true"
+        android:textSize="18sp"
+        android:text="@string/select_date"
+        android:layout_marginTop="12dp"
+        android:foregroundGravity="center"
+        android:background="@drawable/rounded_corners"/>
+</RelativeLayout>

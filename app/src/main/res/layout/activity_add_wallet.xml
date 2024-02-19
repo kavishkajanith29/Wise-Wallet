@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddWalletActivity"
+    android:fitsSystemWindows="true"
+    android:padding="16dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/addWalletHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_wallet_items"
+        android:layout_alignParentTop="true"
+        android:textColor="@color/green"
+        android:textSize="24sp"
+        />
+    <ImageView
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/addWalletHeading"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/baseline_done_24"
+        android:layout_marginEnd="6dp" />
+
+    <EditText
+        android:id="@+id/addCategoryEditText"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:hint="Enter the Category"
+        android:gravity="top"
+        android:padding="12dp"
+        android:textSize="18sp"
+        android:background="@drawable/green_border"
+        android:layout_below="@+id/addWalletHeading"
+        android:inputType="text"
+        android:layout_marginTop="12dp"/>
+
+    <EditText
+        android:id="@+id/addDescriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:hint="Enter the Discription"
+        android:gravity="top"
+        android:padding="12dp"
+        android:textSize="18sp"
+        android:background="@drawable/green_border"
+        android:layout_below="@+id/addCategoryEditText"
+        android:inputType="text"
+        android:layout_marginTop="12dp"/>
+    <EditText
+        android:id="@+id/addAmountEditText"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:hint="Enter the Amount"
+        android:gravity="top"
+        android:padding="12dp"
+        android:textSize="18sp"
+        android:background="@drawable/green_border"
+        android:layout_below="@+id/addDescriptionEditText"
+        android:inputType="numberDecimal"
+        android:layout_marginTop="12dp"/>
+    <Button
+        android:id="@+id/addDateButton"
+        android:layout_width="match_parent"
+        android:layout_height="60sp"
+        android:layout_below="@+id/addAmountEditText"
+        android:layout_centerInParent="true"
+        android:textSize="18sp"
+        android:text="@string/select_date"
+        android:layout_marginTop="12dp"
+        android:foregroundGravity="center"
+        android:background="@drawable/rounded_corners"/>
+</RelativeLayout>
