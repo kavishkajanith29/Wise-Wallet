@@ -6,19 +6,20 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import com.example.wisewallet.databinding.ActivityMainBinding
 
 import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import java.text.DecimalFormat
-
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding:ActivityMainBinding
@@ -71,8 +72,8 @@ class MainActivity : AppCompatActivity() {
         val decimalFormat = DecimalFormat("0.00")
         val formattedBalance = decimalFormat.format(totalBalance)
         binding.getBalance.text = "Rs. $formattedBalance"
-        if (totalBalance < 30000) {
-            sendNotification("Total balance is less than Rs.1000.00")
+        if (totalBalance < 5000) {
+            sendNotification("Total balance is less than Rs.5000.00")
         }
     }
 
@@ -95,6 +96,22 @@ class MainActivity : AppCompatActivity() {
         pieChart.description.isEnabled = false
         pieChart.animateY(1000)
         pieChart.invalidate()
+
+        pieChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+            override fun onValueSelected(e: Entry?, h: Highlight?) {
+                if (e != null) {
+                    val category = (e as PieEntry).label
+                    val bundle = Bundle()
+                    bundle.putString("categoryName", category)
+                    val intent = Intent(this@MainActivity, CategoryDetailActivity::class.java)
+                    intent.putExtras(bundle)
+                    startActivity(intent)
+                }
+            }
+            override fun onNothingSelected() {
+            }
+        })
+
     }
 
     private fun sendNotification(message: String) {

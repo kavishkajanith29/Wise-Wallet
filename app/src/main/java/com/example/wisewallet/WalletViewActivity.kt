@@ -10,8 +10,11 @@ class WalletViewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityWalletViewBinding
     private lateinit var db:WalletDatabaseHelper
     private lateinit var walletAdapter: WalletAdapter
+    private lateinit var WalletYpe :String
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
         super.onCreate(savedInstanceState)
         binding = ActivityWalletViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -22,6 +25,24 @@ class WalletViewActivity : AppCompatActivity() {
 
         binding.walletRecycleView.layoutManager = LinearLayoutManager(this)
         binding.walletRecycleView.adapter = walletAdapter
+
+        binding.btnExpense.setOnClickListener {
+            WalletYpe = "Expense"
+            walletAdapter = WalletAdapter(db.getWalletByType(WalletYpe),this@WalletViewActivity)
+
+            binding.walletRecycleView.layoutManager = LinearLayoutManager(this)
+            binding.walletRecycleView.adapter = walletAdapter
+        }
+        binding.btnIncome.setOnClickListener {
+            WalletYpe = "Income"
+            walletAdapter = WalletAdapter(db.getWalletByType(WalletYpe),this@WalletViewActivity)
+
+            binding.walletRecycleView.layoutManager = LinearLayoutManager(this)
+            binding.walletRecycleView.adapter = walletAdapter
+
+        }
+
+
     }
 
     override fun onRestart() {

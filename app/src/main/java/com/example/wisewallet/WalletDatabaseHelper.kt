@@ -150,11 +150,10 @@ class WalletDatabaseHelper(context: Context):
         return categoryTotals
     }
 
-    fun getWallet(Wallettype :String): List<Wallet>{
+    fun getWalletByType(Wallettype :String): List<Wallet>{
         val walletList = mutableListOf<Wallet>()
         val db = readableDatabase
         val query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_TYPE = ? ORDER BY $COLUMN_DATE DESC "
-        //val cursor = db.rawQuery(query,null)
         val cursor = db.rawQuery(query, arrayOf(Wallettype))
 
         while (cursor.moveToNext()){
@@ -172,4 +171,45 @@ class WalletDatabaseHelper(context: Context):
         db.close()
         return walletList
     }
+
+    fun getCategory(): List<String> {
+        val categoryList = mutableListOf<String>()
+        val db = readableDatabase
+
+        val query = "SELECT DISTINCT $COLUMN_CATEGORY FROM $TABLE_NAME WHERE $COLUMN_TYPE = 'Expense' ORDER BY $COLUMN_CATEGORY ASC"
+
+        val cursor = db.rawQuery(query, null)
+
+        while (cursor.moveToNext()) {
+            val category = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY))
+            categoryList.add(category)
+        }
+
+        cursor.close()
+        db.close()
+        return categoryList
+    }
+
+    fun getExpensesByCategory(Category :String): List<Wallet>{
+        val walletList = mutableListOf<Wallet>()
+        val db = readableDatabase
+        val query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_TYPE = 'Expense' AND $COLUMN_CATEGORY = ? ORDER BY $COLUMN_DATE DESC "
+        val cursor = db.rawQuery(query, arrayOf(Category))
+
+        while (cursor.moveToNext()){
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID))
+            val type = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TYPE))
+            val category = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY))
+            val description  = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION))
+            val amount  = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_AMOUNT))
+            val date  = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE))
+
+            val wallet = Wallet(id, type, category, description, amount, date)
+            walletList.add(wallet)
+        }
+        cursor.close()
+        db.close()
+        return walletList
+    }
+
 }

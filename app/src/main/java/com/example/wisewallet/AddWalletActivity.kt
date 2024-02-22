@@ -3,6 +3,9 @@ package com.example.wisewallet
 import android.app.DatePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import android.widget.Toast
 import com.example.wisewallet.databinding.ActivityAddWalletBinding
@@ -15,6 +18,7 @@ class AddWalletActivity : AppCompatActivity() {
     private lateinit var calendar: Calendar
     private var selectedDate: String? = null
     private lateinit var type:String
+    private lateinit var selectedCategory:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,13 +34,35 @@ class AddWalletActivity : AppCompatActivity() {
 
         calendar = Calendar.getInstance()
 
+        spinnerCategory()
+        selectCategory()
+
+
         binding.addDateButton.setOnClickListener {
             showDatePickerDialog()
         }
 
+        binding.addCategoryEditText.visibility = View.GONE
+
+        binding.btnNew.setOnClickListener {
+            binding.addCategoryEditText.visibility = View.VISIBLE
+            binding.categorySpinner.visibility = View.GONE
+
+        }
+        binding.btnExisting.setOnClickListener {
+            binding.addCategoryEditText.visibility = View.GONE
+            binding.categorySpinner.visibility = View.VISIBLE
+            spinnerCategory()
+        }
+
         binding.saveButton.setOnClickListener {
             val type = type
-            val category = binding.addCategoryEditText.text.toString()
+            val category:String
+            if (binding.addCategoryEditText.visibility == View.VISIBLE) {
+                category = binding.addCategoryEditText.text.toString()
+            } else {
+                category = selectedCategory
+            }
             val description = binding.addDescriptionEditText.text.toString()
             val amount = binding.addAmountEditText.text.toString()
             val date = selectedDate
@@ -72,5 +98,32 @@ class AddWalletActivity : AppCompatActivity() {
             dayOfMonth
         )
         datePickerDialog.show()
+    }
+
+    private fun spinnerCategory(){
+        val categories = db.getCategory()
+
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            categories
+        )
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+
+        binding.categorySpinner.adapter = adapter
+
+    }
+
+    private fun selectCategory(){
+        binding.categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                selectedCategory = parent?.getItemAtPosition(position).toString()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
     }
 }

@@ -15,6 +15,9 @@
         android:theme="@style/Theme.WiseWallet"
         tools:targetApi="31">
         <activity
+            android:name=".CategoryDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".walletCategoryView"
             android:exported="false" />
         <activity

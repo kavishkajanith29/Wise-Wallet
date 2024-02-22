@@ -28,6 +28,33 @@
         android:src="@drawable/baseline_done_24"
         android:layout_marginEnd="6dp" />
 
+    <Spinner
+        android:id="@+id/category_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="60sp"
+        android:dropDownVerticalOffset = "60sp"
+        android:textSize="18sp"
+        android:background="@drawable/bg_spinner"
+        android:layout_below="@+id/addWalletHeading"
+
+        />
+    <Button
+        android:id="@+id/btnNew"
+        android:text="New Category"
+        android:textSize="10sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/category_spinner"
+        android:layout_alignParentRight="true"/>
+
+    <Button
+        android:id="@+id/btnExisting"
+        android:text="Existing Category"
+        android:textSize="10sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/category_spinner"/>
+
     <EditText
         android:id="@+id/addCategoryEditText"
         android:layout_width="match_parent"
@@ -37,7 +64,7 @@
         android:padding="12dp"
         android:textSize="18sp"
         android:background="@drawable/green_border"
-        android:layout_below="@+id/addWalletHeading"
+        android:layout_below="@+id/btnExisting"
         android:inputType="text"
         android:layout_marginTop="12dp"/>
 
