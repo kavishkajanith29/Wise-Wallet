@@ -23,24 +23,36 @@
             android:textSize="24sp"
             android:layout_marginBottom="20sp"/>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btnExpense"
-                android:layout_width="205dp"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
                 android:text="@string/expense" />
 
             <Button
                 android:id="@+id/btnIncome"
-                android:layout_width="205dp"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="40dp"
+                android:layout_marginBottom="12dp"
                 android:text="@string/income" />
 
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

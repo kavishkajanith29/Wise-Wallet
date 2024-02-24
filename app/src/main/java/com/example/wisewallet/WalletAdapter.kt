@@ -14,10 +14,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import java.text.DecimalFormat
 
-class WalletAdapter(private var wallet: List<Wallet>,private val context: Context): RecyclerView.Adapter<WalletAdapter.WalletViewHolder>() {
-
+class WalletAdapter(private var wallet: List<Wallet>,private val context: Context,private val selectDate: String): RecyclerView.Adapter<WalletAdapter.WalletViewHolder>() {
     private val db:WalletDatabaseHelper = WalletDatabaseHelper(context)
-    private lateinit var WalletCategory : String
 
     class WalletViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val typeTextView: TextView = itemView.findViewById(R.id.typeTextView)
@@ -28,6 +26,7 @@ class WalletAdapter(private var wallet: List<Wallet>,private val context: Contex
         val updateButton: ImageView = itemView.findViewById(R.id.updateButton)
         val deleteButton: ImageView = itemView.findViewById(R.id.deleteButton)
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WalletViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.wallet_item,parent,false)
@@ -66,8 +65,13 @@ class WalletAdapter(private var wallet: List<Wallet>,private val context: Contex
             builder.setMessage("Are you sure you want to delete this wallet item?")
             builder.setPositiveButton("Yes") { dialog, which ->
                 db.deleteWallet(wallet.id)
-                refreshData(db.getWallet())
+                refreshData(if (selectDate == "All"){
+                    db.getAllWallet()
+                }else{
+                    db.getWallet(selectDate)
+                })
                 Toast.makeText(holder.itemView.context, "Wallet item Deleted.", Toast.LENGTH_SHORT).show()
+                (holder.itemView.context as? CategoryDetailActivity)?.getCategoryDetails()
             }
             builder.setNegativeButton("No") { dialog, which ->
                 dialog.dismiss()

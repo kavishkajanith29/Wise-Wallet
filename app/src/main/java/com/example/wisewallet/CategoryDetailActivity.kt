@@ -8,9 +8,11 @@ import com.example.wisewallet.databinding.ActivityMainBinding
 
 class CategoryDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCategoryDetailBinding
-    private lateinit var categoryName:String
     private lateinit var db:WalletDatabaseHelper
     private lateinit var walletAdapter:WalletAdapter
+
+    private lateinit var selectedDate: String
+    private lateinit var categoryName:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,18 +21,30 @@ class CategoryDetailActivity : AppCompatActivity() {
 
         db = WalletDatabaseHelper(this)
 
-
-
         val extras = intent.extras
         if (extras != null) {
             categoryName = extras.getString("categoryName").toString()
+            selectedDate = extras.getString("date").toString()
         }
+        getCategoryDetails()
+    }
+    override fun onRestart() {
+        super.onRestart()
+        getCategoryDetails()
+        db.retrieveCategoryTotals(selectedDate)
+    }
+    fun getCategoryDetails(){
         binding.walletCategoryHeading.text = categoryName
 
-        walletAdapter = WalletAdapter(db.getExpensesByCategory(categoryName),this@CategoryDetailActivity)
+        walletAdapter = if (selectedDate == "All"){
+            WalletAdapter(db.getAllExpensesByCategory(categoryName),this@CategoryDetailActivity,selectedDate)
+        }else{
+            WalletAdapter(db.getExpensesByCategory(categoryName,selectedDate),this@CategoryDetailActivity,selectedDate)
+        }
+
         binding.walletRecycleView.layoutManager = LinearLayoutManager(this)
         binding.walletRecycleView.adapter = walletAdapter
-
-
     }
+
 }
+

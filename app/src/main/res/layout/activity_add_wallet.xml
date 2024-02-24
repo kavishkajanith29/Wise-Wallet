@@ -19,25 +19,24 @@
         android:textColor="@color/green"
         android:textSize="24sp"
         />
-    <ImageView
+    <Button
         android:id="@+id/saveButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignTop="@id/addWalletHeading"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/baseline_done_24"
-        android:layout_marginEnd="6dp" />
+        android:layout_marginEnd="6dp"
+        android:text="Save" />
 
     <Spinner
+        android:layout_marginTop="20sp"
         android:id="@+id/category_spinner"
         android:layout_width="match_parent"
         android:layout_height="60sp"
         android:dropDownVerticalOffset = "60sp"
         android:textSize="18sp"
         android:background="@drawable/bg_spinner"
-        android:layout_below="@+id/addWalletHeading"
-
-        />
+        android:layout_below="@+id/addWalletHeading" />
     <Button
         android:id="@+id/btnNew"
         android:text="New Category"

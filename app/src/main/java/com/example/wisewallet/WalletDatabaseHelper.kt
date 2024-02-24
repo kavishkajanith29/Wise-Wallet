@@ -8,6 +8,7 @@ import java.text.DecimalFormat
 
 class WalletDatabaseHelper(context: Context):
     SQLiteOpenHelper(context,DATABASE_NAME,null,1) {
+        private lateinit var query:String
     companion object{
         private const val DATABASE_NAME = "wallet.db"
         private const val TABLE_NAME = "myWallet"
@@ -42,11 +43,33 @@ class WalletDatabaseHelper(context: Context):
         db.close()
     }
 
-    fun getWallet(): List<Wallet>{
+    fun getAllWallet(): List<Wallet>{
         val walletList = mutableListOf<Wallet>()
         val db = readableDatabase
-        val query = "SELECT * FROM $TABLE_NAME ORDER BY $COLUMN_DATE DESC"
+        query = "SELECT * FROM $TABLE_NAME ORDER BY $COLUMN_DATE DESC"
         val cursor = db.rawQuery(query,null)
+
+        while (cursor.moveToNext()){
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID))
+            val type = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TYPE))
+            val category = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY))
+            val description  = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION))
+            val amount  = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_AMOUNT))
+            val date  = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE))
+
+            val wallet = Wallet(id, type, category, description, amount, date)
+            walletList.add(wallet)
+        }
+        cursor.close()
+        db.close()
+        return walletList
+    }
+
+    fun getWallet(setDate :String): List<Wallet>{
+        val walletList = mutableListOf<Wallet>()
+        val db = readableDatabase
+        query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_DATE LIKE ? ORDER BY $COLUMN_DATE DESC"
+        val cursor = db.rawQuery(query, arrayOf("$setDate%"))
 
         while (cursor.moveToNext()){
             val id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID))
@@ -81,7 +104,7 @@ class WalletDatabaseHelper(context: Context):
 
     fun getWalletByID(walletId: Int):Wallet{
         val db = readableDatabase
-        val query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = $walletId"
+        query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = $walletId"
         val cursor = db.rawQuery(query,null)
         cursor.moveToFirst()
 
@@ -105,7 +128,7 @@ class WalletDatabaseHelper(context: Context):
         db.close()
     }
 
-    fun getBalance(): Double {
+    fun getBalanceAll(): Double {
         var totalIncome = 0.0
         var totalExpense = 0.0
         val db = readableDatabase
@@ -133,10 +156,64 @@ class WalletDatabaseHelper(context: Context):
         return String.format("%.2f", totalBalance).toDouble()
     }
 
-    fun retrieveCategoryTotals(): Map<String, Double> {
+    fun getAllIncome(): Double {
+        var totalIncome = 0.0
+        val db = readableDatabase
+        val incomeQuery = "SELECT SUM($COLUMN_AMOUNT) AS total FROM $TABLE_NAME WHERE $COLUMN_TYPE = 'Income' "
+        val incomeCursor = db.rawQuery(incomeQuery, null)
+
+        incomeCursor.use {
+            if (incomeCursor.moveToFirst()) {
+                totalIncome = incomeCursor.getDouble(incomeCursor.getColumnIndexOrThrow("total"))
+            }
+        }
+        return totalIncome
+    }
+    fun getAllExpense(): Double {
+        var totalExpense = 0.0
+        val db = readableDatabase
+        val expenseQuery = "SELECT SUM($COLUMN_AMOUNT) AS total FROM $TABLE_NAME WHERE $COLUMN_TYPE = 'Expense' "
+        val expenseCursor = db.rawQuery(expenseQuery, null)
+
+        expenseCursor.use {
+            if (expenseCursor.moveToFirst()) {
+                totalExpense = expenseCursor.getDouble(expenseCursor.getColumnIndexOrThrow("total"))
+            }
+        }
+        return totalExpense
+    }
+    fun getIncome(setDate: String): Double {
+        var totalIncome = 0.0
+        val db = readableDatabase
+        val incomeQuery = "SELECT SUM($COLUMN_AMOUNT) AS total FROM $TABLE_NAME WHERE $COLUMN_TYPE = 'Income' AND $COLUMN_DATE LIKE ?"
+        val incomeCursor = db.rawQuery(incomeQuery, arrayOf("$setDate%"))
+
+        incomeCursor.use {
+            if (incomeCursor.moveToFirst()) {
+                totalIncome = incomeCursor.getDouble(incomeCursor.getColumnIndexOrThrow("total"))
+            }
+        }
+        return totalIncome
+    }
+
+    fun getExpense(setDate: String): Double {
+        var totalExpense = 0.0
+        val db = readableDatabase
+        val expenseQuery = "SELECT SUM($COLUMN_AMOUNT) AS total FROM $TABLE_NAME WHERE $COLUMN_TYPE = 'Expense' AND $COLUMN_DATE LIKE ?"
+        val expenseCursor = db.rawQuery(expenseQuery, arrayOf("$setDate%"))
+
+        expenseCursor.use {
+            if (expenseCursor.moveToFirst()) {
+                totalExpense = expenseCursor.getDouble(expenseCursor.getColumnIndexOrThrow("total"))
+            }
+        }
+        return totalExpense
+    }
+
+    fun retrieveAllCategoryTotals(): Map<String, Double> {
         val categoryTotals = mutableMapOf<String, Double>()
         val db = readableDatabase
-        val query = "SELECT $COLUMN_CATEGORY, SUM($COLUMN_AMOUNT) AS total FROM $TABLE_NAME WHERE $COLUMN_TYPE = 'Expense' GROUP BY $COLUMN_CATEGORY"
+        query = "SELECT $COLUMN_CATEGORY, SUM($COLUMN_AMOUNT) AS total FROM $TABLE_NAME WHERE $COLUMN_TYPE = 'Expense' GROUP BY $COLUMN_CATEGORY"
         val cursor = db.rawQuery(query, null)
 
         while (cursor.moveToNext()) {
@@ -150,11 +227,50 @@ class WalletDatabaseHelper(context: Context):
         return categoryTotals
     }
 
-    fun getWalletByType(Wallettype :String): List<Wallet>{
+    fun retrieveCategoryTotals(setDate: String): Map<String, Double> {
+        val categoryTotals = mutableMapOf<String, Double>()
+        val db = readableDatabase
+        query = "SELECT $COLUMN_CATEGORY, SUM($COLUMN_AMOUNT) AS total FROM $TABLE_NAME WHERE $COLUMN_TYPE = 'Expense' AND $COLUMN_DATE LIKE ? GROUP BY $COLUMN_CATEGORY"
+        val cursor = db.rawQuery(query, arrayOf("$setDate%"))
+
+        while (cursor.moveToNext()) {
+            val category = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY))
+            val total = cursor.getDouble(cursor.getColumnIndexOrThrow("total"))
+            categoryTotals[category] = total
+        }
+
+        cursor.close()
+        db.close()
+        return categoryTotals
+    }
+
+    fun getAllWalletByType(Wallettype :String): List<Wallet>{
         val walletList = mutableListOf<Wallet>()
         val db = readableDatabase
-        val query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_TYPE = ? ORDER BY $COLUMN_DATE DESC "
+        query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_TYPE = ? ORDER BY $COLUMN_DATE DESC "
         val cursor = db.rawQuery(query, arrayOf(Wallettype))
+
+        while (cursor.moveToNext()){
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID))
+            val type = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TYPE))
+            val category = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY))
+            val description  = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION))
+            val amount  = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_AMOUNT))
+            val date  = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE))
+
+            val wallet = Wallet(id, type, category, description, amount, date)
+            walletList.add(wallet)
+        }
+        cursor.close()
+        db.close()
+        return walletList
+    }
+
+    fun getWalletByType(Wallettype :String,setDate: String): List<Wallet>{
+        val walletList = mutableListOf<Wallet>()
+        val db = readableDatabase
+        query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_TYPE = ? AND $COLUMN_DATE LIKE ? ORDER BY $COLUMN_DATE DESC "
+        val cursor = db.rawQuery(query, arrayOf(Wallettype,"$setDate%"))
 
         while (cursor.moveToNext()){
             val id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID))
@@ -176,7 +292,7 @@ class WalletDatabaseHelper(context: Context):
         val categoryList = mutableListOf<String>()
         val db = readableDatabase
 
-        val query = "SELECT DISTINCT $COLUMN_CATEGORY FROM $TABLE_NAME WHERE $COLUMN_TYPE = 'Expense' ORDER BY $COLUMN_CATEGORY ASC"
+        query = "SELECT DISTINCT $COLUMN_CATEGORY FROM $TABLE_NAME WHERE $COLUMN_TYPE = 'Expense' ORDER BY $COLUMN_CATEGORY ASC"
 
         val cursor = db.rawQuery(query, null)
 
@@ -190,10 +306,10 @@ class WalletDatabaseHelper(context: Context):
         return categoryList
     }
 
-    fun getExpensesByCategory(Category :String): List<Wallet>{
+    fun getAllExpensesByCategory(Category :String): List<Wallet>{
         val walletList = mutableListOf<Wallet>()
         val db = readableDatabase
-        val query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_TYPE = 'Expense' AND $COLUMN_CATEGORY = ? ORDER BY $COLUMN_DATE DESC "
+        query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_TYPE = 'Expense' AND $COLUMN_CATEGORY = ? ORDER BY $COLUMN_DATE DESC "
         val cursor = db.rawQuery(query, arrayOf(Category))
 
         while (cursor.moveToNext()){
@@ -212,4 +328,25 @@ class WalletDatabaseHelper(context: Context):
         return walletList
     }
 
+    fun getExpensesByCategory(Category :String,setDate: String): List<Wallet>{
+        val walletList = mutableListOf<Wallet>()
+        val db = readableDatabase
+        query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_TYPE = 'Expense' AND $COLUMN_CATEGORY = ? AND $COLUMN_DATE LIKE ? ORDER BY $COLUMN_DATE DESC "
+        val cursor = db.rawQuery(query, arrayOf(Category,"$setDate%"))
+
+        while (cursor.moveToNext()){
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID))
+            val type = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TYPE))
+            val category = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY))
+            val description  = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION))
+            val amount  = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_AMOUNT))
+            val date  = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE))
+
+            val wallet = Wallet(id, type, category, description, amount, date)
+            walletList.add(wallet)
+        }
+        cursor.close()
+        db.close()
+        return walletList
+    }
 }

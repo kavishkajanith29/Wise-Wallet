@@ -18,14 +18,15 @@
         android:textColor="@color/green"
         android:textSize="24sp"
         />
-    <ImageView
+
+    <Button
         android:id="@+id/updateSaveButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignTop="@id/editWalletHeading"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/baseline_done_24"
-        android:layout_marginEnd="6dp" />
+        android:layout_marginEnd="6dp"
+        android:text="Save" />
 
     <TextView
         android:id="@+id/updateTypeTextView"
@@ -34,7 +35,7 @@
         android:padding="12dp"
         android:textSize="20sp"
         android:layout_below="@id/editWalletHeading"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/green_border"
         android:maxLines="1" />
 

@@ -55,24 +55,47 @@ class AddWalletActivity : AppCompatActivity() {
             spinnerCategory()
         }
 
+//        binding.saveButton.setOnClickListener {
+//            val type = type
+//            val category:String
+//            if (binding.addCategoryEditText.visibility == View.VISIBLE) {
+//                category = binding.addCategoryEditText.text.toString()
+//            } else {
+//                category = selectedCategory
+//            }
+//            val description = binding.addDescriptionEditText.text.toString()
+//            val amount = binding.addAmountEditText.text.toString()
+//            val date = selectedDate
+//
+//
+//            val wallet = Wallet(0, type, category, description, amount.toDouble(),date.toString())
+//
+//            db.insertWallet(wallet)
+//            finish()
+//            Toast.makeText(this,"Wallet Saved", Toast.LENGTH_SHORT).show()
+//        }
         binding.saveButton.setOnClickListener {
             val type = type
-            val category:String
-            if (binding.addCategoryEditText.visibility == View.VISIBLE) {
-                category = binding.addCategoryEditText.text.toString()
-            } else {
-                category = selectedCategory
-            }
+            val category: String
             val description = binding.addDescriptionEditText.text.toString()
             val amount = binding.addAmountEditText.text.toString()
             val date = selectedDate
 
+            if (description.isBlank() || amount.isBlank() || date.isNullOrEmpty()) {
+                Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show()
+            } else {
+                category = if (binding.addCategoryEditText.visibility == View.VISIBLE) {
+                    binding.addCategoryEditText.text.toString()
+                } else {
+                    selectedCategory
+                }
 
-            val wallet = Wallet(0, type, category, description, amount.toDouble(),date.toString())
+                val wallet = Wallet(0, type, category, description, amount.toDouble(), date.toString())
 
-            db.insertWallet(wallet)
-            finish()
-            Toast.makeText(this,"Wallet Saved", Toast.LENGTH_SHORT).show()
+                db.insertWallet(wallet)
+                finish()
+                Toast.makeText(this, "Wallet Saved", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

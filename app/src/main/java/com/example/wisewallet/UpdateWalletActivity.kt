@@ -39,7 +39,7 @@ class UpdateWalletActivity : AppCompatActivity() {
 
         val wallet = db.getWalletByID(walletId)
         binding.updateTypeTextView.text = wallet.type
-        binding.updateCategoryEditText.setText(wallet.category)
+        binding.updateCategoryEditText.text = wallet.category
         binding.updateDescriptionEditText.setText(wallet.description)
         binding.updateAmountEditText.setText(wallet.amount.toString())
         binding.updateDateButton.text = wallet.date
@@ -49,23 +49,28 @@ class UpdateWalletActivity : AppCompatActivity() {
             val newCategory = binding.updateCategoryEditText.text.toString()
             val newDescription = binding.updateDescriptionEditText.text.toString()
             val newAmount = binding.updateAmountEditText.text.toString()
-            val newDate = binding.updateDateButton.text
+            val newDate = binding.updateDateButton.text.toString()
 
-            val builder = AlertDialog.Builder(this@UpdateWalletActivity)
-            builder.setTitle("Confirmation")
-            builder.setMessage("Are you sure you want to update this wallet item?")
-            builder.setPositiveButton("Yes") { dialog, which ->
-                val updateWallet = Wallet(walletId, newType, newCategory, newDescription, newAmount.toDouble(), newDate.toString())
-                db.updateWallet(updateWallet)
-                finish()
-                Toast.makeText(this,"Change Saved.", Toast.LENGTH_SHORT).show()
+            if (newCategory.isBlank() || newDescription.isBlank() || newAmount.isBlank() || newDate.isEmpty()) {
+                Toast.makeText(this, "All fields must be filled", Toast.LENGTH_SHORT).show()
+            } else {
+                val builder = AlertDialog.Builder(this@UpdateWalletActivity)
+                builder.setTitle("Confirmation")
+                builder.setMessage("Are you sure you want to update this wallet item?")
+                builder.setPositiveButton("Yes") { dialog, which ->
+                    val updateWallet = Wallet(walletId, newType, newCategory, newDescription, newAmount.toDouble(), newDate)
+                    db.updateWallet(updateWallet)
+                    finish()
+                    Toast.makeText(this,"Change Saved.", Toast.LENGTH_SHORT).show()
+                }
+                builder.setNegativeButton("No") { dialog, which ->
+                    dialog.dismiss()
+                }
+                val dialog = builder.create()
+                dialog.show()
             }
-            builder.setNegativeButton("No") { dialog, which ->
-                dialog.dismiss()
-            }
-            val dialog = builder.create()
-            dialog.show()
         }
+
     }
 
     private fun showDatePickerDialog() {
