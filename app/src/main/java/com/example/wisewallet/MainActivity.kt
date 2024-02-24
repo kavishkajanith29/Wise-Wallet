@@ -183,7 +183,7 @@ class MainActivity : AppCompatActivity() {
 
 
         pieChart.centerText = spannableCenterText
-        pieChart.setCenterTextSize(22.0F)
+        pieChart.setCenterTextSize(30.0F)
 
         pieChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
             override fun onValueSelected(e: Entry?, h: Highlight?) {
